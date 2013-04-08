@@ -63,6 +63,61 @@
 
 <p>In the end, you can look at Vanilla API as being an application that sits of top of the default API, translating and handling different requests for use by the application and core controllers who in return carry out the actual methods.</p>
 
+<h2>Configuration</h2>
+
+<p>The API can be configured through the dashboard using the "Application Interface" menu found in the "Forums Settings" section. Here you can see the main API endpoint, you can adjust the request expiration (5 minutes by default) and you can re-generate the application secret used for signature based authentication. Please be aware that there's no way for you to manually set the application secret - it enforces using a UUID v4 key which is a randomly generated, cryptographically secure string. This means that when re-generating the secret, there's no way for you to undo it so caution is advised.</p>
+
+<h2>Authentication</h2>
+
+<p>Vanilla API support two different authentications methods: A semi-stateless session based method as well as a stateless signature based method. The two are completely compatible so you are free to chose between one or other or use them both for different aspects of the same application. Both methods are also highly secure so you won't necessarily need to perform them over HTTPS although it <em>is</em> highly recommended doing so.</p>
+
+<h3>Session based authentication</h3>
+
+<p>There's nothing too fancy about the session based authentication method from an API point of view: This method is in fact just the default Vanilla authentication. It is semi-stateless in the sense that when authenticating with the server, each client gets assigned a cookie which initiates a session. If a client accesses the API with a valid session, he or she can freely interface with Vanilla using the API, only restricted by their permissions.</p>
+
+<p>Should you wish to use the session based authentication method, you'll need to use one of the many SSO solutions available for Vanilla to authenticate users from within your application. I have a custom SSO API class planned but it's not going to be ready anytime soon.</p>
+
+<h3>Signature based authentication</h3>
+
+<p>The signature based authentication method is similar to that used by <a href="http://aws.amazon.com/articles/1928#HTTP">Amazon Web Services</a>. To make an API call, you'll need 3 things: A public key, a private key and a signature (also referred to as <em>token</em>). The public key can be either the username or the email of the user making the request whilst the private key is an application secret generated for you upon enabling Vanilla API <strong>*</strong>. The signature is an HMAC-SHA256 hash created by combining the public and the private key with any queries you want to pass along with your request and then signing it all with a Unix timestamp (UTC).</p>
+
+<p>The request is then sent along to the server and the signature recreated using the information sent with the request. The server then compares its generated signature with the one from the request - if these match, then the client is considered legitimate and an authenticated session is started for the duration of the request.</p>
+
+<h4>Implementations</h4>
+
+<p>Coming soon...</p>
+
+<h4>Security precautions</h4>
+
+<p>It is highly recommended to include the HTTP method as well the request URI in your query, and thus in the hash generation as well, as this can help prevent man-in-the-middle attacks where an attacker could potentially modify the endpoint you are operating on as well as the HTTP method.</p>
+
+<h2>Extending</h2>
+
+<p>Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper - it's as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. Once I've established the final architecture for v0.1.0, I'll describe the whole process in depth. Here's how it looks so far:</p>
+
+<p>In <code>class.api_class_foo.php</code> placed in your application's or plugin's <code>library</code> directory:</p>
+
+<div class="highlight"><pre><span class="o">&lt;?</span><span class="nx">php</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">defined</span><span class="p">(</span><span class="s1">'APPLICATION'</span><span class="p">))</span> <span class="k">exit</span><span class="p">();</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Foo API</span>
+<span class="sd"> *</span>
+<span class="sd"> * Description of Foo API</span>
+<span class="sd"> *</span>
+<span class="sd"> * @package    [name]</span>
+<span class="sd"> * @since      [version]</span>
+<span class="sd"> * @author     [author] &lt;[email]&gt;</span>
+<span class="sd"> * @copyright  [description]</span>
+<span class="sd"> * @license    [url] [description]</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">API_Class_Foo</span> <span class="k">implements</span> <span class="nx">API_IMapper</span>
+<span class="p">{</span>
+   <span class="c1">// API operations go here</span>
+<span class="p">}</span>
+</pre></div>
+
+<p>More coming soon...</p>
+
 <h2>Issue tracking</h2>
 
 <p>If you come across any bugs or if you have a feature request, please <a href="https://github.com/kasperisager/VanillaAPI/issues">file an issue</a> using the Github Issue tracker. Vanilla API won't be supported through <a href="http://vanillaforums.org">http://vanillaforums.org</a> so please stick to using Github for inquires about bugs and feature requests. Thanks!</p>
