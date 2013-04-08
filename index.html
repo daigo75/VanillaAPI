@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Vanillaapi by kasperisager</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Vanillaapi</h1>
+        <p>Highly extensible RESTful API for Vanilla. Still undergoing development</p>
+        <p class="view"><a href="https://github.com/kasperisager/VanillaAPI">View the Project on GitHub <small>kasperisager/VanillaAPI</small></a></p>
+        <ul>
+          <li><a href="https://github.com/kasperisager/VanillaAPI/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kasperisager/VanillaAPI/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kasperisager/VanillaAPI">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <p><a href="https://github.com/kasperisager/VanillaAPI"><img src="design/images/api.png" alt="Vanilla API"></a></p>
+
+<h1>Vanilla API <a href="https://travis-ci.org/kasperisager/VanillaAPI"><img src="https://travis-ci.org/kasperisager/VanillaAPI.png?branch=master" alt="Build Status"></a> <a href="https://gemnasium.com/kasperisager/VanillaAPI"><img src="https://gemnasium.com/kasperisager/VanillaAPI.png" alt="Dependency Status"></a>
+</h1>
+
+<p>A super early version of a RESTful API for Vanilla that responds in JSON and XML.</p>
+
+<blockquote>
+<h4>Notice</h4>
+
+<p>The Vanilla API is still undergoing heavy development and gets rewritten every so often. Do therefore <strong>not</strong> use it for <strong>anything</strong> just yet. You're more than welcome to take a look at the source though and any contribution would be greatly appreciated!</p>
+</blockquote>
+
+<h2>Library dependencies</h2>
+
+<h3>
+<a href="https://github.com/doctrine/common">Doctrine Common</a> <a href="https://travis-ci.org/doctrine/common"><img src="https://travis-ci.org/doctrine/common.png?branch=2.3" alt="Build Status"></a>
+</h3>
+
+<p>The Doctrine Common project is a library that provides extensions to core PHP functionality.</p>
+
+<h3>
+<a href="https://github.com/zircote/swagger-php">Swagger PHP</a> <a href="https://travis-ci.org/zircote/swagger-php"><img src="https://travis-ci.org/zircote/swagger-php.png?branch=0.6" alt="Build Status"></a>
+</h3>
+
+<p>Swagger-PHP is a PHP library that servers as an annotations toolkit to produce <a href="http://swagger.wordnik.com">Swagger Doc</a>.
+It makes extensive use of the <a href="http://www.doctrine-project.org/projects/common.html">Doctrine Common library</a> for
+annotations support and caching.</p>
+
+<h2>Getting started</h2>
+
+<p>To get started using Vanilla API, either:</p>
+
+<ul>
+<li><a href="https://github.com/kasperisager/VanillaAPI/archive/master.zip">Download the latest release</a></li>
+<li>Clone the repository directly into your Vanilla <code>applications</code> directory:<br><code>$ cd /path/to/vanilla/applications/</code><br><code>$ git clone git://github.com/kasperisager/VanillaAPI.git</code>
+</li>
+</ul><p>Now that you've downloaded Vanilla API, it's time to get it installed. Vanilla API comes with a Makefile that makes installation a breeze:</p>
+
+<div class="highlight"><pre><span class="nv">$ </span><span class="o">[</span>sudo<span class="o">]</span> make install
+</pre></div>
+
+<p>Now simply go to your Vanilla dashboard, enable Vanilla API in the "Applications" menu and navigate to the API Explorer for all your documentation needs: <a href="http://your-domain.com/api">http://your-domain.com/api</a></p>
+
+<h2>How does it work?</h2>
+
+<p>Vanilla API is in fact not an API in itself. A more fitting description would be that it's a mapper tool whose purpose is to implement a RESTful URI scheme upon with you can invoke different methods using the standard GET, POST, PUT and DELETE HTTP verbs. It also translates PUT and DELETE requests into POST requests so that Garden can understand and process these.</p>
+
+<p>In the end, you can look at Vanilla API as being an application that sits of top of the default API, translating and handling different requests for use by the application and core controllers who in return carry out the actual methods.</p>
+
+<h2>Makefile tasks</h2>
+
+<p>Vanilla API comes with a couple of handy makefile task for installing, updating and unstalling dependencies. Some of these may require that you run them as the root user so be prepared to <code>sudo</code> if things go fishy.</p>
+
+<h4>install - <code>make install</code>
+</h4>
+
+<p>Downloads Composer and installs the required Composer and NPM packages.</p>
+
+<h4>update - <code>make update</code>
+</h4>
+
+<p>Downloads and install new versions of the installed Composer packages.</p>
+
+<h4>clean - <code>make clean</code>
+</h4>
+
+<p>Removes all files and directories created by <code>make install</code> and <code>make update</code>.</p>
+
+<blockquote>
+<h4>Notice</h4>
+
+<p>Please be aware that manually installing the dependencies using <code>npm install</code> and <code>composer install</code> will result in errors upon running the application. This is due to the fact that the third party libraries used contains tests and binaries that are currently conflicting with Garden. The makefile takes care of removing these, leaving only the actual libraries for use by Vanilla API.</p>
+</blockquote>
+
+<h2>Issue tracking</h2>
+
+<p>If you come across any bugs or if you have a feature request, please <a href="https://github.com/kasperisager/VanillaAPI/issues">file an issue</a> using the Github Issue tracker. Vanilla API won't be supported through <a href="http://vanillaforums.org">http://vanillaforums.org</a> so please stick to using Github for inquires about bugs and feature requests. Thanks!</p>
+
+<hr><p>Copyright 2013 © <a href="https://github.com/kasperisager">Kasper K. Isager</a>. Licensed under the terms of the <a href="LICENSE.md">MIT License</a></p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/kasperisager">kasperisager</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
