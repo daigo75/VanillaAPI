@@ -6,9 +6,13 @@
       {% include header.html %}
    </head>
    <body>
+
+      <div id="toc"></div>
+
       <div class="wrapper">
+
          <header>
-            <h1>Vanilla API <a href="https://travis-ci.org/kasperisager/VanillaAPI"><img src="https://travis-ci.org/kasperisager/VanillaAPI.png?branch=master" alt="Build Status"></a></h1>
+            <h1>Vanilla API {% include status.html %}</h1>
             <p>Highly extensible RESTful API for Vanilla</p>
             <p class="view"><a href="https://github.com/kasperisager/VanillaAPI">View the Project on GitHub <small>kasperisager/VanillaAPI</small></a></p>
             <ul>
@@ -17,6 +21,7 @@
                <li><a href="https://github.com/kasperisager/VanillaAPI">View On <strong>GitHub</strong></a></li>
             </ul>
          </header>
+
          <section>
 
             {{content}}
@@ -24,11 +29,16 @@
             <hr>
             <p>Copyright 2013 © <a href="https://github.com/kasperisager">Kasper K. Isager</a>. Licensed under the terms of the <a href="/VanillaAPI/license">MIT License</a></p>
          </section>
+
       </div>
+
       <footer>
          <p>Project maintained by <a href="https://github.com/kasperisager">kasperisager</a></p>
          <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
       </footer>
+
+      {% include footer.html %}
+
       <!--[if !IE]><script>fixScale(document);</script><![endif]-->
       
    </body>
