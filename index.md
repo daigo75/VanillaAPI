@@ -149,7 +149,7 @@ It's super important that your API class follows the PEAR naming conventions as 
 
 Now that we've written the class skeleton, it's time to write some API methods (operations). The API Mapper has four methods that you can extend: `Get()`, `Post()`, `Put()` and of course `Delete()`. You don't have to extend them all - should to chose to only extend, say, the `Get()` method since your API is read-only, the three others will simply throw a 501 Method Not Implemented.
 
-Each method must return an array of data containing at least a `Resource` key which defines the URI that you'd like to map the API request to. Say, for example, that our application or plugin's `Foo` controller defines the method `Bar` that allows us get a list of... well, FooBar? If we want to make that resource universally available by sending a `GET` request to `api/foo`, this would be our `Get()` method:
+Each method must return an array of data containing at least a `Resource` key which defines the URI that you'd like to map the API request to. Say, for example, that our application or plugin's `Foo` controller defines the method `Bar` that allows us get a list of... well, FooBars? If we want to make that resource universally available by sending a `GET` request to `api/foo`, this would be our `Get()` method:
 
 {% highlight php %}
 <?php
@@ -168,7 +168,7 @@ public function Get($Parameters)
 }
 {% endhighlight %}
 
-Now, when requesting `api/foo`, you'll get a list of all our FooBars! But wait - the data is still rendered as XHTML because we set up a nice view to display FooBars from our `Foo` controller. To change this, we'll need to get some information about the HTTP_ACCEPT header that was sent along with the request so we now what kind of data the client would like returned - `$Parameters` to the rescue!
+Now, when requesting `api/foo`, you'll get a list of all our FooBars! But wait - the data is still rendered as XHTML because we set up a nice view to display FooBars from our `Foo` controller. To change this, we'll need to get some information about the `HTTP_ACCEPT` header that was sent along with the request so we know what kind of data the client would like returned - `$Parameters` to the rescue!
 
 {% highlight php %}
 <?php
