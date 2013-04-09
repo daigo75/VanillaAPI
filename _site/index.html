@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="chrome=1">
+      <title>Vanilla API by Kasper Isager</title>
+
+      <link rel="stylesheet" href="/stylesheets/styles.css">
+      <link rel="stylesheet" href="/stylesheets/pygment_trac.css">
+      <script src="/javascripts/scale.fix.js"></script>
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+      <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+   </head>
+   <body>
+      <div class="wrapper">
+         <header>
+            <h1>Vanilla API <a href="https://travis-ci.org/kasperisager/VanillaAPI"><img src="https://travis-ci.org/kasperisager/VanillaAPI.png?branch=master" alt="Build Status"></a></h1>
+            <p>Highly extensible RESTful API for Vanilla</p>
+            <p class="view"><a href="https://github.com/kasperisager/VanillaAPI">View the Project on GitHub <small>kasperisager/VanillaAPI</small></a></p>
+            <ul>
+               <li><a href="https://github.com/kasperisager/VanillaAPI/zipball/master">Download <strong>ZIP File</strong></a></li>
+               <li><a href="https://github.com/kasperisager/VanillaAPI/tarball/master">Download <strong>TAR Ball</strong></a></li>
+               <li><a href="https://github.com/kasperisager/VanillaAPI">View On <strong>GitHub</strong></a></li>
+            </ul>
+         </header>
+         <section>
+
+            <blockquote>
+<h4>Notice</h4>
+
+<p>The Vanilla API is still undergoing heavy development and gets rewritten every so often. Do therefore <strong>not</strong> use it for <strong>anything</strong> just yet. You&#39;re more than welcome to take a look at the source though and any contribution would be greatly appreciated!</p>
+</blockquote>
+
+<h2>Getting started</h2>
+
+<p>To get started using Vanilla API, either:
+- <a href="https://github.com/kasperisager/VanillaAPI/archive/master.zip">Download the latest release</a>
+- Clone the repository directly into your Vanilla <code>applications</code> directory:<br>
+<code>$ cd /path/to/vanilla/applications/</code><br>
+<code>$ git clone git://github.com/kasperisager/VanillaAPI.git</code></p>
+
+<p>When you&#39;ve done this, make sure the newly created folder is named <code>api</code> and not <code>VanillaAPI</code>. Now simply go to your dashboard, enable the API in the &quot;Applications&quot; menu and you&#39;re all set!</p>
+
+<h3>Generating documentation</h3>
+
+<p>The application source is well-documented and the API comes bundled with <a href="https://github.com/fabpot/Sami">Sami</a> for generating the documentation. You will however need to install Sami first after which you can generate the documentation:</p>
+<div class="highlight"><pre><code class="sh"><span class="nv">$ </span>composer install <span class="o">&amp;&amp;</span> php vendors/sami/sami/sami.php update config.php -v
+</code></pre></div>
+<p>If the Composer installation fails, if might be a good idea to <a href="http://getcomposer.org/doc/00-intro.md#installation-nix">read the instructions</a> on how to use Composer. When you&#39;ve got it all up and running, navigate to http://your-domain.com/applications/api/build to read the generated documentation.</p>
+
+<h2>How does it work?</h2>
+
+<p>Vanilla API is in fact not an API in itself. A more fitting description would be that it&#39;s a mapper tool whose purpose is to implement a RESTful URI scheme upon with you can invoke different methods using the standard GET, POST, PUT and DELETE HTTP verbs. It also translates PUT and DELETE requests into POST requests so that Garden can understand and process these.</p>
+
+<p>In the end, you can look at Vanilla API as being an application that sits of top of the default API, translating and handling different requests for use by the application and core controllers who in return carry out the actual methods.</p>
+
+<h2>Configuration</h2>
+
+<p>The API can be configured through the dashboard using the &quot;Application Interface&quot; menu found in the &quot;Forums Settings&quot; section. Here you can see the main API endpoint and you can re-generate the application secret used for signature based authentication. Please be aware that there&#39;s no way for you to manually set the application secret - it enforces using a UUID v4 key which is a randomly generated, cryptographically secure string.</p>
+
+<p>Should you wish to change to request expiration time, you can do this using the following configuration statement:</p>
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="nv">$Configuration</span><span class="p">[</span><span class="s1">&#39;API&#39;</span><span class="p">][</span><span class="s1">&#39;Expiration&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">*</span> <span class="mi">60</span><span class="p">;</span> <span class="c1">// Defaults to 5 minutes</span>
+</code></pre></div>
+<h2>Authentication</h2>
+
+<p>Vanilla API support two different authentications methods: A semi-stateless session based method as well as a stateless signature based method. The two are completely compatible so you are free to chose between one or other or use them both for different aspects of the same application. Both methods are also highly secure so you won&#39;t necessarily need to perform them over HTTPS although it <em>is</em> highly recommended doing so.</p>
+
+<h3>Session based authentication</h3>
+
+<p>There&#39;s nothing too fancy about the session based authentication method from an API point of view: This method is in fact just the default Vanilla authentication. It is semi-stateless in the sense that when authenticating with the server, each client gets assigned a cookie which initiates a session. If a client accesses the API with a valid session, he or she can freely interface with Vanilla using the API, only restricted by their permissions.</p>
+
+<p>Should you wish to use the session based authentication method, you&#39;ll need to use one of the many SSO solutions available for Vanilla to authenticate users from within your application. I have a custom SSO API class planned but it&#39;s not going to be ready anytime soon.</p>
+
+<h3>Signature based authentication</h3>
+
+<p>The signature based authentication method is similar to that used by <a href="http://aws.amazon.com/articles/1928#HTTP">Amazon Web Services</a>. To make an API call, you&#39;ll need 3 things: A public key, a private key and a signature (also referred to as <em>token</em>). The public key can be either the username or the email of the user making the request whilst the private key is an application secret generated for you upon enabling Vanilla API. The signature is an HMAC-SHA256 hash created by combining the public and the private key with any queries you want to pass along with your request and then signing it all with a Unix timestamp (UTC).</p>
+
+<p>The request is then sent along to the server and the signature recreated using the information sent with the request. The server then compares its generated signature with the one from the request - if these match, then the client is considered legitimate and an authenticated session is started for the duration of the request.</p>
+
+<h4>Implementations</h4>
+
+<p>Coming soon...</p>
+
+<h4>Security precautions</h4>
+
+<p>It is highly recommended to include the HTTP method as well the request URI in your query, and thus in the hash generation as well, as this can help prevent man-in-the-middle attacks where an attacker could potentially modify the endpoint you are operating on as well as the HTTP method.</p>
+
+<h2>Extending</h2>
+
+<p>Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper - it&#39;s as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. Once I&#39;ve established the final architecture for v0.1.0, I&#39;ll describe the whole process in depth. Here&#39;s how it looks so far:</p>
+
+<p>In <code>class.api_class_foo.php</code> placed in your application&#39;s or plugin&#39;s <code>library</code> directory:</p>
+<div class="highlight"><pre><code class="php"><span class="cp">&lt;?php</span> <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">defined</span><span class="p">(</span><span class="s1">&#39;APPLICATION&#39;</span><span class="p">))</span> <span class="k">exit</span><span class="p">();</span>
+
+<span class="sd">/**</span>
+<span class="sd"> * Foo API</span>
+<span class="sd"> *</span>
+<span class="sd"> * Description of Foo API</span>
+<span class="sd"> *</span>
+<span class="sd"> * @package    [name]</span>
+<span class="sd"> * @since      [version]</span>
+<span class="sd"> * @author     [author] &lt;[email]&gt;</span>
+<span class="sd"> * @copyright  [description]</span>
+<span class="sd"> * @license    [url] [description]</span>
+<span class="sd"> */</span>
+<span class="k">class</span> <span class="nc">API_Class_Foo</span> <span class="k">implements</span> <span class="nx">API_IMapper</span>
+<span class="p">{</span>
+   <span class="c1">// API operations go here</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>More coming soon...</p>
+
+<h2>Issue tracking</h2>
+
+<p>If you come across any bugs or if you have a feature request, please <a href="https://github.com/kasperisager/VanillaAPI/issues">file an issue</a> using the Github Issue tracker. Vanilla API won&#39;t be supported through http://vanillaforums.org so please stick to using Github for inquires about bugs and feature requests. Thanks!</p>
+
+
+            <hr>
+            <p>Copyright 2013 © <a href="https://github.com/kasperisager">Kasper K. Isager</a>. Licensed under the terms of the <a href="/license">MIT License</a></p>
+         </section>
+      </div>
+      <footer>
+         <p>Project maintained by <a href="https://github.com/kasperisager">kasperisager</a></p>
+         <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+      </footer>
+      <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+      
+   </body>
+</html>
