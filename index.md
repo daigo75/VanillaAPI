@@ -117,11 +117,11 @@ It is highly recommended to include the HTTP method as well the request URI in y
 
 ## Extending
 
-Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper interface - it's as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. You can also write your own autoloader which is what I've done for loading the core API classes - this merely because I'm pretty nit-picky when it comes to my folder structure.
+Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper - it's as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. You can also write your own autoloader which is what I've done for loading the core API classes - this merely because I'm pretty nit-picky when it comes to my folder structure.
 
 ### Classes
 
-As an exmaple, say we wanted to integrate our application's or plugin's (let's name it _Foo_) custom API with the Vanilla API Mapper interface so that we can access our API in a RESTful manner. What we'd do is create a file named `class.api_class_foo.php` and put it in, say, our application's or plugin's `library` directory. Just to get things going, let's go ahead and write the class skeleton:
+As an exmaple, say we wanted to integrate our application's or plugin's (let's name it _Foo_) custom API with the Vanilla API Mapper so that we can access our API in a RESTful manner. What we'd do is create a file named `class.api_class_foo.php` and put it in, say, our application's or plugin's `library` directory. Just to get things going, let's go ahead and write the class skeleton:
 
 {% highlight php %}
 <?php if (!defined('APPLICATION')) exit();
@@ -137,7 +137,7 @@ As an exmaple, say we wanted to integrate our application's or plugin's (let's n
  * @copyright  [description]
  * @license    [url] [description]
  */
-class API_Class_Foo implements API_IMapper
+class API_Class_Foo extends API_Mapper
 {
    // API operations go here
 }
