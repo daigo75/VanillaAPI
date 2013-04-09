@@ -46,7 +46,7 @@ Should you wish to change to request expiration time, you can do this using the 
 
 ## Authentication
 
-Vanilla API support two different authentications methods: A semi-stateless session based method as well as a stateless signature based method. The two are completely compatible so you are free to chose between one or other or use them both for different aspects of the same application. Both methods are also highly secure so you won't necessarily need to perform them over HTTPS although it _is_ highly recommended doing so.
+Vanilla API supports two different authentication methods: A semi-stateless session based method as well as a stateless signature based method. The two are completely compatible so you are free to chose between one or other or use them both for different aspects of the same application. Both methods are also highly secure so you won't necessarily need to perform them over HTTPS although it _is_ highly recommended doing so.
 
 ### Session based
 
@@ -70,9 +70,11 @@ It is highly recommended to include the HTTP method as well the request URI in y
 
 ## Extending
 
-Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper - it's as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. Once I've established the final architecture for v0.1.0, I'll describe the whole process in depth. Here's how it looks so far:
+Vanilla API allows you to easily integrate your own plugins and applications with the API Mapper interface - it's as simple as creating a new API class and putting it anywhere in your application or plugin where the Garden autoloader can find it. You can also write your own autoloader which is what I've done for loading the core API classes - this merely because I'm pretty nit-picky when it comes to my folder structure.
 
-In `class.api_class_foo.php` placed in your application's or plugin's `library` directory:
+### Classes
+
+As an exmaple, say we wanted to integrate our application's or plugin's (let's name it _Foo_) custom API with the Vanilla API Mapper interface so that we can access our API in a RESTful manner. What we'd do is create a file named `class.api_class_foo.php` and put it in, say, our application's or plugin's `library` directory. Just to get things going, let's go ahead and write the class skeleton:
 
 {% highlight php %}
 <?php if (!defined('APPLICATION')) exit();
@@ -94,7 +96,11 @@ class API_Class_Foo implements API_IMapper
 }
 {% endhighlight %}
 
-More coming soon...
+It's super important that your API class follows the PEAR naming conventions as the API engine calls classes by taking the URI resource path (a call to `api/foo` would results in a URI resource path of `foo`) and prefixing it with `API_Class_`. This is a pseudo-namespace technique that allows us to avoid class name clashes.
+
+### Operations
+
+Coming soon...
 
 ## Issue tracking
 
