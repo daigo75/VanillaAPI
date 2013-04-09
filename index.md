@@ -62,7 +62,54 @@ The request is then sent along to the server and the signature recreated using t
 
 #### Implementations
 
-Coming soon...
+So far, the only implementation of the token generator is written in PHP - porting it to other languages should be pretty straight forward as the token generation is pretty simple, yet highly efficient. Let's take it by example...
+
+Say we wanted to send the following request from our application to Vanilla:
+
+{% highlight sh %}
+METHOD /api/endpoint/:id?query=value
+{% endhighlight %}
+
+This is of course just an abstraction of an actual HTTP request. Still, according to what we read earlier we'll need to also include a public key and a timestamp:
+
+{% highlight sh %}
+METHOD /api/endpoint/:id?query=value&username=johndoe&email=example@mail.com&timestamp= [timestamp]
+{% endhighlight %}
+
+It's not required that you include both a username _and_ an email, but let's do it anyway. The request above would correspond to the following data array:
+
+{% highlight php %}
+<?php
+$Request = array();
+$Request['query'] = 'value';
+$Request['username'] = 'johndoe';
+$Request['email'] = 'example@mail.com';
+$Request['timestamp'] = [timestamp];
+{% endhighlight %}
+
+Next up, the actual magic: An HMAC token. First off, we'll need to take our request apart as we'll need to do a little sorting of the request parameters so we're sure the token is generated the same way on both client and server. More specifically, we'll need to sort the parameters alphabetically after which we remove all the keys (we're only interested in the values) and delimit the values with a dash:
+
+{% highlight php %}
+<?php
+// Sort the request data alphabetically
+ksort($Request, SORT_STRING);
+
+// Delimit the data values with a dash
+implode('-', $Request)
+{% endhighlight %}
+
+Lastly, we can use the request data to generate an HMAC token using our application secret:
+
+{% highlight php %}
+<?php
+$Token = hash_hmac('sha256', strtolower($Request), $Secret);
+{% endhighlight %}
+
+It's important that we lowercase the request data as to ensure consistent hash generation. We can now add the token to our request and send it off to the server:
+
+{% highlight sh %}
+METHOD /api/endpoint/:id?query=value&username=johndoe&email=example@mail.com&timestamp= [timestamp]&token=[generated hash]
+{% endhighlight %}
 
 #### Security precautions
 
