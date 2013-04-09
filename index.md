@@ -36,7 +36,7 @@ In the end, you can look at Vanilla API as being an application that sits of top
 
 ## Configuration
 
-The API can be configured through the dashboard using the "Application Interface" menu found in the "Forums Settings" section. Here you can see the main API endpoint and you can re-generate the application secret used for signature based authentication. Please be aware that there's no way for you to manually set the application secret - it enforces using a UUID v4 key which is a randomly generated, cryptographically secure string.
+The API can be configured through the dashboard using the "Application Interface" menu found in the "Forums Settings" section. Here you can see the main API endpoint and you can re-generate the application secret used for signature based authentication. Please be aware that there's no way for you to manually set the application secret in the dashboard - it enforces using a UUID v4 key which is a randomly generated, cryptographically secure string.
 
 Should you wish to change to request expiration time, you can do this using the following configuration statement:
 
@@ -121,7 +121,7 @@ Vanilla API allows you to easily integrate your own plugins and applications wit
 
 ### Classes
 
-As an exmaple, say we wanted to integrate our application's or plugin's (let's name it _Foo_) custom API with the Vanilla API Mapper so that we can access our API in a RESTful manner. What we'd do is create a file named `class.api_class_foo.php` and put it in, say, our application's or plugin's `library` directory. Just to get things going, let's go ahead and write the class skeleton:
+As an exmaple, say we wanted to integrate our application or plugin's custom API (let's name it _Foo_) with the Vanilla API Mapper so that we can access our API in a RESTful manner. What we'd do is create a file named `class.api_class_foo.php` and put it in, say, our application or plugin's `library` directory. Just to get things going, let's go ahead and write the class skeleton:
 
 {% highlight php %}
 <?php if (!defined('APPLICATION')) exit();
@@ -147,7 +147,42 @@ It's super important that your API class follows the PEAR naming conventions as 
 
 ### Operations
 
-Coming soon...
+Now that we've written the class skeleton, it's time to write some API methods (operations). The API Mapper has four methods that you can extend: `Get()`, `Post()`, `Put()` and of course `Delete()`. You don't have to extend them all - should to chose to only extend, say, the `Get()` method since your API is read-only, the three others will simply throw a 501 Method Not Implemented.
+
+Each method must return an array of data containing at least a `Resource` key which defines the URI that you'd like to map the API request to. Say, for example, that our application or plugin's `Foo` controller defines the method `Bar` that allows us get a list of... well, FooBar? If we want to make that resource universally available by sending a `GET` request to `api/foo`, this would be our `Get()` method:
+
+{% highlight php %}
+<?php
+// Each API method takes a $Parameter array containing
+// some useful information about the request
+public function Get($Parameters)
+{
+   // Set up the array that we wish to return
+   $Return = array();
+
+   // Set the 'Resource' key and its value
+   $Return['Resource'] = 'foo/bar';
+
+   // Return our $Return array
+   return $Return;
+}
+{% endhighlight %}
+
+Now, when requesting `api/foo`, you'll get a list of all our FooBars! But wait - the data is still rendered as XHTML because we set up a nice view to display FooBars from our `Foo` controller. To change this, we'll need to get some information about the HTTP_ACCEPT header that was sent along with the request so we now what kind of data the client would like returned - `$Parameters` to the rescue!
+
+{% highlight php %}
+<?php
+// The HTTP_ACCEPT header format is actually stored
+// in $Parameters and can be either JSON or XML
+$Format = $Parameters['Format'];
+
+// Now we can define what kind of data we'd like to
+// be returned from our controller since Garden will
+// handle all of that based on a simple file extension
+$Return['Resource'] = 'foo/bar' . '.' . $Format;
+{% endhighlight %}
+
+Voila! Requesting `api/foo` will now yield an XML or JSON document containing our FooBars depending on our HTTP_ACCEPT header.
 
 ## Issue tracking
 
