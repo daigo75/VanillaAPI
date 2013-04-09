@@ -3,6 +3,5 @@ server:     true
 permalink:  pretty
 markdown:   redcarpet
 pygments:   true
-baseurl:    ""
 exclude:
    - .gitignore
