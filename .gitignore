@@ -1,9 +1,2 @@
 _site
 .DS_Store
-vendors
-build
-cache
-composer.lock
-composer.phar
-*.sublime-project
-*.sublime-workspace
