@@ -149,40 +149,83 @@ It's super important that your API class follows the PEAR naming conventions as 
 
 Now that we've written the class skeleton, it's time to write some API methods (operations). The API Mapper has four methods that you can extend: `Get()`, `Post()`, `Put()` and of course `Delete()`. You don't have to extend them all - should to chose to only extend, say, the `Get()` method since your API is read-only, the three others will simply throw a 501 Method Not Implemented.
 
-Each method must return an array of data containing at least a `Resource` key which defines the URI that you'd like to map the API request to. Say, for example, that our application or plugin's `Foo` controller defines the method `Bar` that allows us get a list of... well, FooBars? If we want to make that resource universally available by sending a `GET` request to `api/foo`, this would be our `Get()` method:
+Each method must return an array of data containing at least a `Controller` key which defines the controller that you'd like to map the API request to. By default, the controller's `Index` method will be called but you can override this by adding a `Method` key to the data array. Say, for example, that our application or plugin's `Foo` controller defines the method `Bar` that allows us get a list of... well, FooBars? If we want to make that resource universally available by sending a `GET` request to `api/foo`, this would be our `Get()` method:
 
 {% highlight php %}
 <?php
-// Each API method takes a $Parameter array containing
-// some useful information about the request
-public function Get($Parameters)
+// Each API method takes a $Path array containing
+// some the full URI of the request
+public function Get($Path)
 {
    // Set up the array that we wish to return
    $Return = array();
 
-   // Set the 'Resource' key and its value
-   $Return['Resource'] = 'foo/bar';
+   // Set the 'Controller' key
+   $Return['Controller']   = 'Foo';
+   
+   // Set the 'Method' key
+   $Return['Method']       = 'Bar';
 
    // Return our $Return array
    return $Return;
 }
 {% endhighlight %}
 
-Now, when requesting `api/foo`, you'll get a list of all our FooBars! But wait - the data is still rendered as XHTML because we set up a nice view to display FooBars from our `Foo` controller. To change this, we'll need to get some information about the `HTTP_ACCEPT` header that was sent along with the request so we know what kind of data the client would like returned - `$Parameters` to the rescue!
+Et voilá! Requesting `api/foo` will now give us a JSON or XML document (depending on our HTTP_ACCEPT header) containing our FooBars. What if we wanted to get a specific FooBar when requesting `api/foo/:id`? For this purpose, we can use the `$Path` variable since it contains the full URI with `api` being the index (0), `foo` being the first value (1) and `:id` being the second value (2). Let's start out by reworking our `Get()` method so it knows what function to call when a client requests a specific FooBar:
 
 {% highlight php %}
 <?php
-// The HTTP_ACCEPT header format is actually stored
-// in $Parameters and can be either JSON or XML
-$Format = $Parameters['Format'];
-
-// Now we can define what kind of data we'd like to
-// be returned from our controller since Garden will
-// handle all of that based on a simple file extension
-$Return['Resource'] = 'foo/bar' . '.' . $Format;
+public function Get($Path)
+{
+   // If an ID is defined, store it
+   if (isset($Path[2])) $ID = $Path[2];
+   
+   if (isset($ID))
+      return self::GetById($ID);
+   else
+      return self::GetAll();
+}
 {% endhighlight %}
 
-Voila! Requesting `api/foo` will now yield an XML or JSON document containing our FooBars depending on our HTTP_ACCEPT header.
+Now on to writing the `GetAll()` function which was the one we initially wrote:
+
+{% highlight php %}
+<?php
+public static function GetAll()
+{
+   $Return = array();
+   $Return['Controller']   = 'Foo';
+   $Return['Method']       = 'Bar';
+
+   return $Return;
+}
+{% endhighlight %}
+
+Finally, we can write the `GetById()` function:
+
+{% highlight php %}
+<?php
+public static function GetById($ID)
+{
+   // Same old, same old
+   $Return = array();
+   $Return['Controller']   = 'Foo';
+   $Return['Method']       = 'Bar';
+   
+   // Add the ID as a method argument
+   $Return['Arguments']    = array($ID);
+
+   return $Return;
+}
+{% endhighlight %}
+
+And that's it! Requesting `api/foo/:id` will now get us a specific FooBar given that you've implemented getting resources by ID in your `Bar` function in your `Foo` controller.
+
+As for the rest of API operations, it's pretty much the same as the basic `Get()` method. There's one slight difference: The rest of the function allow you to define custom Form Data arguments to be passed along to a given controller. To do this, simply add the custom data to the `Arguments` key:
+
+{% highlight php %}
+<?php $Return['Arguments']['Custom Key'] = 'Custom Value';
+{% endhighlight %}
 
 ## Issue tracking
 
