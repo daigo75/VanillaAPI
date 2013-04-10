@@ -221,7 +221,7 @@ public static function GetById($ID)
 
 And that's it! Requesting `api/foo/:id` will now get us a specific FooBar given that you've implemented getting resources by ID in your `Bar` function in your `Foo` controller.
 
-As for the rest of API operations, it's pretty much the same as the basic `Get()` method. There's one slight difference: The rest of the function allow you to define custom Form Data arguments to be passed along to a given controller. To do this, simply add the custom data to the `Arguments` key:
+As for the rest of the API operations, it's pretty much the same as the basic `Get()` method. There's one slight difference: The rest of the functions allow you to define custom Form Data arguments to be passed along to a given controller method. To do this, simply add the custom data to the `Arguments` key:
 
 {% highlight php %}
 <?php $Return['Arguments']['Custom Key'] = 'Custom Value';
